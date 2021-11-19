@@ -11,14 +11,14 @@ import streamlit as st
 import altair as alt
 import os
 
-path = os.path.dirname(__file__)
-my_file = path+"\\Datasets\\SP500.csv"
+#path = os.path.dirname(__file__)
+#my_file = path+"\\Datasets\\SP500.csv"
 
-snp500 = pd.read_csv(my_file)
-symbols = snp500['Symbol'].sort_values().tolist()
+#snp500 = pd.read_csv(my_file)
+#symbols = snp500['Symbol'].sort_values().tolist()
 
 
-#symbols = ["NET","AAPL","MMM","A"]
+symbols = ["NET","AAPL","MMM","A"]
 ticker = st.sidebar.selectbox(
     'Choose a S&P 500 Stock',
      symbols)     
