@@ -74,11 +74,11 @@ close = alt.Chart(signals_df).mark_line(color="lightgray").encode(
 
 moving_avgs = alt.Chart(signals_df).mark_line().transform_fold(
     fold=["SMA50","SMA100"],
-    as_ =["average","y"]
+    
 ).encode(
     x="Date:T",
-    y="y:Q",
-    color="average:N"
+    y="value:Q",
+    color="key:N"
 )
 
 exit_ = alt.Chart(signals_df).mark_circle(color="red",).encode(
