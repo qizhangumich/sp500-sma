@@ -156,3 +156,44 @@ plot_2 = total_portfolio_value + entry_2 + exit_2
 plot_2.properties(width=1000,height=400)
 st.markdown('Your Strategy performance' )
 st.altair_chart(plot_2, use_container_width=True)
+
+
+# Prepare DataFrame for metrics
+metrics = [
+    'Annual Return',
+    'Cumulative Returns',
+    'Annual Volatility',
+    'Sharpe Ratio',
+    'Sortino Ratio']
+columns = ['Backtest']
+# Initialize the DataFrame with index set to evaluation metrics and column as `Backtest` (just like PyFolio)
+portfolio_evaluation_df = pd.DataFrame(index=metrics, columns=columns)
+
+portfolio_evaluation_df.loc['Cumulative Returns'] = signals_df['Portfolio Cumulative Returns'].iloc[-1]
+
+# Calculate annualized return
+portfolio_evaluation_df.loc['Annual Return'] = (
+    signals_df['Portfolio Daily Returns'].mean() * 252
+)
+# Calculate annual volatility
+portfolio_evaluation_df.loc['Annual Volatility'] = (
+    signals_df['Portfolio Daily Returns'].std() * np.sqrt(252)
+)
+# Calculate Sharpe Ratio
+portfolio_evaluation_df.loc['Sharpe Ratio'] = (
+    signals_df['Portfolio Daily Returns'].mean() * 252) / (
+    signals_df['Portfolio Daily Returns'].std() * np.sqrt(252)
+)
+# Calculate Downside Return
+sortino_ratio_df = signals_df[['Portfolio Daily Returns']].copy()
+sortino_ratio_df.loc[:,'Downside Returns'] = 0
+target = 0
+mask = sortino_ratio_df['Portfolio Daily Returns'] < target
+sortino_ratio_df.loc[mask, 'Downside Returns'] = sortino_ratio_df['Portfolio Daily Returns']**2
+# Calculate Sortino Ratio
+down_stdev = np.sqrt(sortino_ratio_df['Downside Returns'].mean()) * np.sqrt(252)
+expected_return = sortino_ratio_df['Portfolio Daily Returns'].mean() * 252
+sortino_ratio = expected_return/down_stdev
+portfolio_evaluation_df.loc['Sortino Ratio'] = sortino_ratio
+
+st.table(data=portfolio_evaluation_df)
